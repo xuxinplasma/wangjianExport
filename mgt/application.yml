@@ -1,0 +1,92 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/wangjianExport?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
+    username: root
+    password:
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat,wall
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      stat-view-servlet:
+        allow: 127.0.0.1
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  mvc:
+    servlet:
+      load-on-startup: 1
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 10s
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
+mybatis:
+  type-aliases-package: com.pay.server.modules
+  mapper-locations: classpath:/mybatis-mappers/**/*.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+logging:
+  config: classpath:logback-admin.xml
+log:
+  level:
+    root: info
+    my: debug
+  file: c:/paymgt/logs/paymgt.log
+  maxsize: 30MB
+token:
+  expire:
+    seconds: 2592000
+  jwtSecret: (XIAO:)_$^11244^%$_(WEI:)_@@++--(LAO:)_++++_.sds_(SHI:)
+server:
+  tomcat:
+    basedir: c:/paymgt/temp
+  port: 8092
+
+#自定义配置
+custom:
+  #短信相关
+  sms:
+    #1：开启 0：不开启(默认123456)
+    status: 0
+    #用户名
+    username: wwhy
+    #密码
+    password: b9e9f233f083012debdecc16027f0389
+
+knife4j:
+  # 开启增强配置
+  enable: true
+  # 开启生产环境屏蔽
+  # production: true
+  # 开启Swagger的Basic认证功能,默认是false
+  basic:
+    enable: true
+    # Basic认证用户名
+    username: root
+    # Basic认证密码
+    password: 888888
+
+    
+    

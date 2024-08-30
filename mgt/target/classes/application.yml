@@ -1,0 +1,57 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/wangjianExport?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
+    username: root
+    password:
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat,wall
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      stat-view-servlet:
+        allow: 127.0.0.1
+    jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      joda-date-time-format: yyyy-MM-dd HH:mm:ss
+      time-zone: GMT+8
+    servlet:
+      multipart:
+        max-file-size: 100MB
+        max-request-size: 100MB
+    mvc:
+      servlet:
+        load-on-startup: 1
+
+mybatis:
+  type-aliases-package: com.pay.server.modules
+  mapper-locations: classpath:/mybatis-mappers/**/*.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+logging:
+  config: classpath:logback.xml
+log:
+  level:
+    root: info
+    my: debug
+  file: c:/paymgt/logs/paymgt.log
+  maxsize: 30MB
+server:
+  tomcat:
+    basedir: c:/paymgt/temp
+  port: 8092
+
+
+
+    
+    

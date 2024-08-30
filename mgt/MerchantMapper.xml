@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pay.server.modules.admin.dao.MerchantDao">
+
+	<sql id="where">
+		<where>
+			<if test="params.id != null and params.id != ''">
+				and t.id = #{params.id}
+			</if>
+			<if test="params.name != null and params.name != ''">
+				and t.name like concat('%', #{params.name}, '%')
+			</if>
+			<if test="params.mobile != null and params.mobile != ''">
+				and t.mobile like concat('%', #{params.mobile}, '%')
+			</if>
+			<if test="params.principal != null and params.principal != ''">
+				and t.principal like concat('%', #{params.principal}, '%')
+			</if>
+			<if test="params.status != null and params.status != ''">
+				and t.status = #{params.status}
+			</if>
+			<if test="params.agentId != null and params.agentId != ''">
+				and t.agent_id = #{params.agentId}
+			</if>
+		</where>
+	</sql>
+
+	<select id="count" resultType="int">
+		select count(1) from t_merchant t
+		left join t_channel c on t.channel_id=c.id
+		left join t_agent a on a.id=t.agent_id
+		left join sys_user u on t.create_by=u.id
+		<include refid="where" />
+	</select>
+
+	<select id="list" resultType="com.pay.server.modules.admin.model.vo.MerchantVO">
+		select t.*,c.name as channel_name,a.name as agent_name,u.name as create_by_name from t_merchant t
+		left join t_channel c on t.channel_id=c.id
+		left join t_agent a on a.id=t.agent_id
+		left join sys_user u on t.create_by=u.id
+		<include refid="where" />
+		order by t.create_time desc
+		limit #{offset}, #{limit}
+	</select>
+
+	<update id="update">
+		update t_merchant t
+		<set>
+			<if test="name != null and null != ''">
+				name = #{name}, 
+			</if>
+			<if test="mobile != null and mobile != ''">
+				mobile = #{mobile}, 
+			</if>
+			<if test="email != null and email != ''">
+				email = #{email}, 
+			</if>
+			<if test="principal != null and principal != ''">
+				principal = #{principal},
+			</if>
+			<if test="rechargeCallbackUrl != null and rechargeCallbackUrl !=  ''">
+				recharge_callback_url = #{rechargeCallbackUrl},
+			</if>
+			<if test="withdrawCallbackUrl != null and withdrawCallbackUrl !=  ''">
+				withdraw_callback_url = #{withdrawCallbackUrl},
+			</if>
+			<if test="channelId != null and channelId !=  ''">
+				channel_id = #{channelId},
+			</if>
+			<if test="ipWhites != null and ipWhites !=  ''">
+				ip_whites = #{ipWhites},
+			</if>
+			update_time = now()
+		</set>
+
+		where t.id = #{id}
+	</update>
+
+</mapper>
