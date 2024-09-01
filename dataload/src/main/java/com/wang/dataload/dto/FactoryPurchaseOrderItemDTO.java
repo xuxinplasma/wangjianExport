@@ -15,6 +15,10 @@ import java.util.Date;
 @ToString
 public class FactoryPurchaseOrderItemDTO {
 
+    private Integer id;
+
+    private Integer factoryPurchaseOrderId;
+
     private String productModel;
 
     private BigDecimal unitPriceRMB;

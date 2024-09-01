@@ -13,6 +13,8 @@ import java.util.Date;
 @ToString
 public class Broker {
 
+    private Integer id;
+
     private String brokerOverseasName;
 
     private String brokerOverseasAddress;

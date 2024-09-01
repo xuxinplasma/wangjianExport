@@ -14,6 +14,8 @@ import java.util.Date;
 @ToString
 public class ExportMerchant {
 
+    private Integer id;
+
     private String merchantName;
 
     private String merchantAddress;

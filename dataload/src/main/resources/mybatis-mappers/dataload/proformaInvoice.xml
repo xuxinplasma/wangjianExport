@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wang.dataload.dao.ProformaInvoiceDAO">
+    <!-- Insert child entity -->
+    <insert id="insertBroker" parameterType="Broker" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Broker (broker_overseas_name, broker_overseas_address, bank_name, bank_address, bank_account, swift_code,
+        create_time,last_update_date, broker_overseas_phone, broker_domestic_phone, broker_domestic_name, broker_domestic_address)
+        VALUES (#{brokerOverseasName}, #{brokerOverseasAddress}, #{bankName}, #{bankAddress},  #{bankAccount}, #{swiftCode},
+        #{createTime}, #{lastUpdateDate},#{brokerOverseasPhone}, #{brokerDomesticPhone},#{brokerDomesticName}, #{brokerDomesticAddress} )
+    </insert>
+
+    <insert id="insertImportMerchant" parameterType="ImportMerchant" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Import_Merchant (merchant_name, merchant_address, create_time, last_update_date)
+        VALUES (#{merchantName}, #{merchantAddress}, #{createTime}, #{lastUpdateDate} )
+    </insert>
+
+    <insert id="insertExportMerchant" parameterType="ExportMerchant" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO export_merchant (merchant_name, merchant_address,merchant_phone, create_time, last_update_date)
+        VALUES (#{merchantName}, #{merchantAddress}, #{merchantPhone},#{createTime}, #{lastUpdateDate} )
+    </insert>
+
+    <!-- Insert parent entity, using the generated child ID -->
+    <insert id="insertProformaInvoice" parameterType="ProformaInvoiceDTO" useGeneratedKeys="true" keyProperty="id">
+        insert into proforma_invoice ( proforma_invoice_num , shipping_method, payment_method,import_merchant_id, broker_id,
+        remark, proforma_invoice_date, create_time, last_update_date, proforma_invoice_to, proforma_invoice_from)
+        values(#{proformaInvoiceNum}, #{shippingMethod}, #{paymentMethod},#{importMerchant.id},#{broker.id},
+        #{remark},#{proformaInvoiceDate}, #{createTime}, #{lastUpdateDate},#{proformaInvoiceTo}, #{proformaInvoiceFrom})
+    </insert>
+
+    <insert id="insertProformaInvoiceItem" parameterType="ProformaInvoiceOrderItemDTO" useGeneratedKeys="true" keyProperty="id">
+        insert into proforma_invoice_order_item ( proforma_invoice_id , product_model, unit_price_rmb,unit_price_usd, amount_usd,
+        amount_rmb, quantity, remark, create_time,last_update_date)
+        values(#{proformaInvoiceOrderId}, #{productModel}, #{unitPriceRMB},#{unitPriceUSD},#{amountUSD},
+        #{amountRMB},#{proformaInvoiceDate}, #{remark}, #{createTime},#{lastUpdateDate})
+    </insert>
+
+    <insert id="insertFactoryPurchaseOrder" parameterType="FactoryPurchaseOrderDTO" useGeneratedKeys="true" keyProperty="id">
+        insert into factory_purchase_order ( proforma_invoice_id ,factory_order_number, export_merchant_id, broker_id,
+        remark, delivery_mode, packaging_mode, factory_order_date,create_time, last_update_date,order_sign_location)
+        values(#{proformaInvoiceId}, #{factoryOrderNumber}, #{exportMerchant.id},#{broker.id},
+        #{remark},#{deliverMode}, #{packageMode}, #{factoryOrderDate}, #{createTime}, #{lastUpdateDate})
+    </insert>
+
+    <insert id="insertFactoryPurchaseOrderItem" parameterType="FactoryPurchaseOrderItemDTO" useGeneratedKeys="true" keyProperty="id">
+        insert into factory_purchase_order_item ( factory_purchase_order_id ,product_model, unit_price_rmb,
+        amount_rmb, quantity, remark, create_time,last_update_date)
+        values(#{factoryPurchaseOrderId},  #{productModel}, #{unitPriceRMB},
+        #{amountRMB},#{quantity}, #{remark}, #{createTime},#{lastUpdateDate})
+    </insert>
+
+
+</mapper>

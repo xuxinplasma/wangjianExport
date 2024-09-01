@@ -16,6 +16,10 @@ import java.util.List;
 @ToString
 public class FactoryPurchaseOrderDTO {
 
+    private Integer id;
+
+    private Integer proformaInvoiceId;
+
     private List<FactoryPurchaseOrderItemDTO> factoryPurchaseOrderItemDTOList;
 
     private String factoryOrderNumber;

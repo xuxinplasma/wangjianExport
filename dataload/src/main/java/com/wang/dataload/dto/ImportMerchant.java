@@ -15,6 +15,8 @@ import java.util.Date;
 @ToString
 public class ImportMerchant {
 
+    private Integer id;
+
     private String merchantName;
 
     private String merchantAddress;

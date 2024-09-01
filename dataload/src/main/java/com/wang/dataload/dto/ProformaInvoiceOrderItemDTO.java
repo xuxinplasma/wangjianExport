@@ -16,6 +16,10 @@ import java.util.Date;
 @ToString
 public class ProformaInvoiceOrderItemDTO {
 
+    private Integer id;
+
+    private Integer proformaInvoiceOrderId;
+
     private String productModel;
 
     private BigDecimal unitPriceRMB;

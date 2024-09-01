@@ -17,6 +17,8 @@ import java.util.List;
 @ToString
 public class ProformaInvoiceDTO {
 
+    private Integer id;
+
     private String proformaInvoiceNum;
 
     private String shippingMethod;

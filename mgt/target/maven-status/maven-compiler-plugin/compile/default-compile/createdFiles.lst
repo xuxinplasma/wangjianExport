@@ -1,5 +1,0 @@
-com\wang\mgt\controller\ProformaInvoiceController.class
-com\wang\dataload\dto\ImportMerchant.class
-com\wang\mgt\service\MerchantService.class
-com\wang\mgt\dao\MerchantDAO.class
-com\wang\mgt\Application.class
