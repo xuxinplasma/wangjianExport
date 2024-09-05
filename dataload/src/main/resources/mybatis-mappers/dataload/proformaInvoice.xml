@@ -32,14 +32,14 @@
         insert into proforma_invoice_order_item ( proforma_invoice_id , product_model, unit_price_rmb,unit_price_usd, amount_usd,
         amount_rmb, quantity, remark, create_time,last_update_date)
         values(#{proformaInvoiceOrderId}, #{productModel}, #{unitPriceRMB},#{unitPriceUSD},#{amountUSD},
-        #{amountRMB},#{proformaInvoiceDate}, #{remark}, #{createTime},#{lastUpdateDate})
+        #{amountRMB},#{quantity}, #{remark}, #{createTime},#{lastUpdateDate})
     </insert>
 
     <insert id="insertFactoryPurchaseOrder" parameterType="com.wang.dataload.dto.FactoryPurchaseOrderDTO" useGeneratedKeys="true" keyProperty="id">
         insert into factory_purchase_order ( proforma_invoice_id ,factory_order_number, export_merchant_id, broker_id,
         remark, delivery_mode, packaging_mode, factory_order_date,create_time, last_update_date,order_sign_location)
         values(#{proformaInvoiceId}, #{factoryOrderNumber}, #{exportMerchant.id},#{broker.id},
-        #{remark},#{deliverMode}, #{packageMode}, #{factoryOrderDate}, #{createTime}, #{lastUpdateDate})
+        #{remark},#{deliverMode}, #{packageMode}, #{factoryOrderDate}, #{createTime}, #{lastUpdateDate},#{orderSignLocation})
     </insert>
 
     <insert id="insertFactoryPurchaseOrderItem" parameterType="com.wang.dataload.dto.FactoryPurchaseOrderItemDTO" useGeneratedKeys="true" keyProperty="id">
