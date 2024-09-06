@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Cell;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -56,49 +57,66 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
             String cellValueStr = (String) cellValue;
             log.debug("FactoryPurchaseOrderFormProcessor string cell value " + cellValueStr);
             if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_REMARK)) {
+                log.debug(" set order form remark ind");
                 remarkInd = true;
                 orderFormItemInd = false;
                 remarkBF = new StringBuffer();
             } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_START)) {
+                log.debug(" set order form item ind");
+                exporterMerchantInd = false;
                 orderFormItemInd = true;
             } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_DELIVERY)) {
+                log.debug(" set order form delivery ind");
                 deliveryInd = true;
                 remarkInd = false;
                 factoryPurchaseOrderDTO.setRemark(remarkBF.toString());
             } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_PACKAGE)) {
+                log.debug(" set order form package ind");
                 packingInd = true;
                 packageBF = new StringBuffer();
                 deliveryInd = false;
             } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_NO)) {
+                log.debug(" set order form  ind");
                 orderFormInd = true;
                 if (factoryPurchaseOrderDTO == null) {
                     factoryPurchaseOrderDTO = new FactoryPurchaseOrderDTO();
+                    factoryPurchaseOrderDTO.setCreateTime(new Date());
                     broker = new Broker();
+                    broker.setCreateTime(new Date());
                     factoryPurchaseOrderDTO.setBroker(broker);
+
                     exportMerchant = new ExportMerchant();
+                    exportMerchant.setCreateTime(new Date());
                     factoryPurchaseOrderDTO.setExportMerchant(exportMerchant);
                     factoryPurchaseOrderItemDTOList = new ArrayList<FactoryPurchaseOrderItemDTO>();
                     factoryPurchaseOrderDTO.setFactoryPurchaseOrderItemDTOList(factoryPurchaseOrderItemDTOList);
                 }
             } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_EXPORTER_NAME)) {
+                log.debug(" set order form export ind");
                 orderFormInd = false;
                 exporterMerchantInd = true;
 
-            }
-            if (orderFormInd) {
-                processOrder(cell);
-            } else if (exporterMerchantInd) {
-                processExporterMerchant(cell);
-            } else if (orderFormItemInd) {
-                processOrderFormItem(cell);
-            } else if (remarkInd) {
-                processOrderFormRemark(cell);
-            } else if (deliveryInd) {
-                processOrderFormDelivery(cell);
-            } else if (packingInd) {
-                processOrderFormPacking(cell);
+            } else if (cellValue.equals(ExporterConstants.WANGJIAN_EOD)){
+                packingInd = false;
+                factoryPurchaseOrderDTO.setPackageMode(packageBF.toString());
             }
 
+
+        }
+        if (orderFormInd) {
+
+            processOrder(cell);
+        } else if (exporterMerchantInd) {
+            processExporterMerchant(cell);
+        } else if (orderFormItemInd) {
+            log.debug("call processOrderFormItem");
+            processOrderFormItem(cell);
+        } else if (remarkInd) {
+            processOrderFormRemark(cell);
+        } else if (deliveryInd) {
+            processOrderFormDelivery(cell);
+        } else if (packingInd) {
+            processOrderFormPacking(cell);
         }
     }
 
@@ -170,14 +188,22 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
     }
 
     public void processOrderFormItem(Cell cell) {
+        log.debug("call  processOrderFormItem " + cell.getClass());
         Object cellValue = DataUtils.getCellValue(cell);
         Double cellValueDouble = null;
         String cellValueStr = null;
+        log.debug("cellvalue instance " + cellValue.getClass());
         if (cellValue instanceof String) {
-            cellValueStr = (String) cellValue;
-            log.debug("FactoryPurchaseOrderFormProcessor processOrderFormItem string cell value " + cellValueStr);
+            cellValueStr = ((String) cellValue).trim();
+
+            log.debug("FactoryPurchaseOrderFormProcessor processOrderFormItem string cell value:" + cellValueStr);
             if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_FORM_ITEM_EXPORTER_MODELS_COLUMN) {
-                if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_MODEL)) {
+                log.debug("FACTORY_ORDER_FORM_ITEM_MODEL ExporterConstants.FACTORY_ORDER_FORM_ITEM_MODEL:" + ExporterConstants.FACTORY_ORDER_FORM_ITEM_MODEL);
+                log.debug("FACTORY_ORDER_FORM_ITEM_MODEL ExporterConstants.FACTORY_ORDER_FORM_ITEM_START:" + ExporterConstants.FACTORY_ORDER_FORM_ITEM_START);
+                log.debug("cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_MODEL):" + cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_MODEL));
+                log.debug("cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_START):" + cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_START));
+
+                if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_MODEL) && !cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_START)) {
                     log.debug("FACTORY_ORDER_FORM_ITEM_MODEL    " + cellValueStr);
                     if (factoryPurchaseOrderItemDTO != null) {
 
@@ -185,6 +211,7 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
                         log.debug("getFactoryPurchaseOrderItemDTOList " + factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().toString());
                     }
                     factoryPurchaseOrderItemDTO = new FactoryPurchaseOrderItemDTO();
+                    factoryPurchaseOrderItemDTO.setCreateTime(new Date());
                     factoryPurchaseOrderItemDTO.setProductModel(cellValueStr);
                 }
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_FORM_ITEM_EXPORTER_REMARK_COLUMN) {

@@ -2,6 +2,7 @@ package com.wang.dataload.data;
 
 import com.wang.dataload.dto.FactoryPurchaseOrderDTO;
 import com.wang.dataload.dto.ProformaInvoiceDTO;
+import com.wang.dataload.service.PersistentOrderService;
 import com.wang.dataload.util.ExporterConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+@Service
 @Slf4j
 public class DataFileImporter {
 
@@ -28,6 +32,9 @@ public class DataFileImporter {
     ProformaInvoiceDTO proformaInvoiceDTO = null;
     List<FactoryPurchaseOrderDTO> factoryPurchaseOrderDTOList = new ArrayList<>();
     FactoryPurchaseOrderDTO factoryPurchaseOrderDTO = null;
+
+    @Autowired
+    PersistentOrderService persistentOrderService;
 
     public static void main(String[] args) {
         DataFileImporter dataFileImporter = new DataFileImporter();
@@ -78,8 +85,8 @@ public class DataFileImporter {
     }
 
     public void fileImporter(String[] args) {
-        String excelFilePath = "F:\\xxhncs\\xxh\\wangjian\\22W-012 QG.xlsx";
-       try (FileInputStream fis = new FileInputStream(excelFilePath);
+
+       try (FileInputStream fis = new FileInputStream(args[0]);
              Workbook workbook = new XSSFWorkbook(fis)) {
 
             // Get the first sheet
@@ -120,15 +127,12 @@ public class DataFileImporter {
                     log.debug("factoryPurchaseOrderDTO " + factoryPurchaseOrderDTO.toString());
                 }
             }
-           FactoryPurchaseOrderFormProcessor factoryPurchaseOrderFormProcessor = (FactoryPurchaseOrderFormProcessor)dataProcessor;
-           factoryPurchaseOrderDTO = factoryPurchaseOrderFormProcessor.getFactoryPurchaseOrderDTO();
-           factoryPurchaseOrderDTOList.add(factoryPurchaseOrderDTO);
-           log.debug("factoryPurchaseOrderDTO " + factoryPurchaseOrderDTO.toString());
-
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        persistentOrderService.persistentOrder(proformaInvoiceDTO, factoryPurchaseOrderDTOList);
     }
 
     public void createDataProcessBasedCellValue(Cell cell) {

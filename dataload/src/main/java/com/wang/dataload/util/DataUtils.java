@@ -12,29 +12,29 @@ public class DataUtils {
     public static Object getCellValue(Cell cell) {
         switch (cell.getCellType()) {
             case STRING:
-                System.out.print(cell.getStringCellValue().trim() + "\t");
+                log.debug(cell.getStringCellValue().trim() + "\t");
                 return cell.getStringCellValue().trim();
 
             case NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    System.out.print(cell.getDateCellValue() + "\t");
+                    log.debug(cell.getDateCellValue() + "\t");
                     return cell.getDateCellValue();
                 } else {
-                    System.out.print(cell.getNumericCellValue() + "\t");
+                    log.debug(cell.getNumericCellValue() + "\t");
                     return Double.valueOf(cell.getNumericCellValue());
                 }
 
             case BOOLEAN:
-                System.out.print(cell.getBooleanCellValue() + "\t");
+                log.debug(cell.getBooleanCellValue() + "\t");
                 return Boolean.valueOf(cell.getBooleanCellValue());
 
             case FORMULA:
-                System.out.print(cell.getCellFormula() + "\t");
+                log.debug(cell.getCellFormula() + "\t");
                 log.debug("cell.getNumericCellValue() " + cell.getNumericCellValue());
                 return Double.valueOf(cell.getNumericCellValue());
 
             default:
-                System.out.print(" ");
+                log.debug(" ");
                 return "";
         }
 

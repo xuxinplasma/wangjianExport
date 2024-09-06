@@ -64,9 +64,12 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
             else {
                 if(factoryPurchaseOrderDTO == null) {
                     factoryPurchaseOrderDTO = new FactoryPurchaseOrderDTO();
+                    factoryPurchaseOrderDTO.setCreateTime(new Date());
                     broker = new Broker();
+                    broker.setCreateTime(new Date());
                     factoryPurchaseOrderDTO.setBroker(broker);
                     exportMerchant = new ExportMerchant();
+                    exportMerchant.setCreateTime(new Date());
                     factoryPurchaseOrderDTO.setExportMerchant(exportMerchant);
                     factoryPurchaseOrderItemDTOList = new ArrayList<FactoryPurchaseOrderItemDTO>();
                     factoryPurchaseOrderDTO.setFactoryPurchaseOrderItemDTOList(factoryPurchaseOrderItemDTOList);
@@ -182,6 +185,7 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
                         log.debug("getFactoryPurchaseOrderItemDTOList " + factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().toString());
                     }
                     factoryPurchaseOrderItemDTO = new FactoryPurchaseOrderItemDTO();
+                    factoryPurchaseOrderItemDTO.setCreateTime(new Date());
                     factoryPurchaseOrderItemDTO.setProductModel(cellValueStr);
                 }
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_EXPORTER_MODELS_COLUMN) {

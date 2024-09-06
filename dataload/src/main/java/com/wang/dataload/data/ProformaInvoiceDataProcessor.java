@@ -57,8 +57,11 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
                 importerAddressInd = true;
                 importerAddressSB = new StringBuffer("");
                 proformaInvoiceDTO = new ProformaInvoiceDTO();
+                proformaInvoiceDTO.setCreateTime(new Date());
                 importMerchant = new ImportMerchant();
+                importMerchant.setCreateTime(new Date());
                 broker = new Broker();
+                broker.setCreateTime(new Date());
                 proformaInvoiceOrderItemDTOList = new ArrayList<ProformaInvoiceOrderItemDTO>();
                 proformaInvoiceDTO.setBroker(broker);
                 proformaInvoiceDTO.setImportMerchant(importMerchant);
@@ -188,6 +191,7 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
                         log.debug("getProformaInvoiceOrderItemDTOList " + proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().toString());
                     }
                     proformaInvoiceOrderItemDTO = new ProformaInvoiceOrderItemDTO();
+                    proformaInvoiceOrderItemDTO.setCreateTime(new Date());
                     proformaInvoiceOrderItemDTO.setProductModel(cellValueStr);
                 }
             } else if (cell.getColumnIndex() == ExporterConstants.UNIT_PRICE_COLUMN) {
