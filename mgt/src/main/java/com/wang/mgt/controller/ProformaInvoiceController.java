@@ -1,6 +1,8 @@
 package com.wang.mgt.controller;
 
+import com.wang.dataload.dto.ProformaInvoiceDTO;
 import com.wang.mgt.service.MerchantService;
+import com.wang.mgt.service.ProformaInvoiceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,12 +20,24 @@ public class ProformaInvoiceController {
 
     @Autowired MerchantService merchantService;
 
+    @Autowired
+    ProformaInvoiceService proformaInvoiceService;
+
     @GetMapping
-    public ImportMerchant searchProformalInvoice(){
-        System.out.println("ProformaInvoiceController searchProformalInvoice ");
-        ImportMerchant importMerchant = merchantService.ListImporterMerchant(118);
+    public ImportMerchant searchMerchant(){
+        System.out.println("ProformaInvoiceController searchMerchant ");
+        ImportMerchant importMerchant = merchantService.listImporterMerchant(118);
 
         return importMerchant;
-
     }
+
+    @GetMapping("/findByNum")
+    public ProformaInvoiceDTO searchProformaInvoice(){
+        System.out.println("ProformaInvoiceController searchProformaInvoice ");
+        ProformaInvoiceDTO proformaInvoiceDTO = proformaInvoiceService.searchProformaInvoiceByInvoiceNo("22W-012");
+        System.out.println("proformaInvoiceDTO " + proformaInvoiceDTO.toString());
+        return proformaInvoiceDTO;
+    }
+
+
 }

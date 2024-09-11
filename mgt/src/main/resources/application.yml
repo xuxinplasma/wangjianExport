@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/wangjianExport?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/wangjianExport?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
     username: root
-    password:
+    password: ue74%He#i2
     druid:
       initialSize: 5
       minIdle: 5
@@ -34,8 +34,8 @@ spring:
         load-on-startup: 1
 
 mybatis:
-  type-aliases-package: com.pay.server.modules
-  mapper-locations: classpath:/mybatis-mappers/**/*.xml
+  type-aliases-package: com.wang.mgt.dao
+  mapper-locations: classpath:mybatis-mappers/mgt/*.xml
   configuration:
     mapUnderscoreToCamelCase: true
 logging:

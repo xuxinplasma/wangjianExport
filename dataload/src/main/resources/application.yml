@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/wangjianExport?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
     username: root
-    password:
+    password: ue74%He#i2
     druid:
       initialSize: 5
       minIdle: 5

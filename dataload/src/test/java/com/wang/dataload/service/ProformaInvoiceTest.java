@@ -144,9 +144,9 @@ public class ProformaInvoiceTest {
         proformaInvoiceOrderItemDTO.setProformaInvoiceOrderId(1);
         proformaInvoiceOrderItemDTO.setProductModel("model1");
         proformaInvoiceOrderItemDTO.setUnitPriceRMB(new BigDecimal("111"));
-        proformaInvoiceOrderItemDTO.setUnitPriceUSD(new BigDecimal(23));
-        proformaInvoiceOrderItemDTO.setAmountRMB(new BigDecimal(124423));
-        proformaInvoiceOrderItemDTO.setAmountUSD(new BigDecimal(3452));
+        //proformaInvoiceOrderItemDTO.setUnitPriceUSD(new BigDecimal(23));
+        //proformaInvoiceOrderItemDTO.setAmountRMB(new BigDecimal(124423));
+       // proformaInvoiceOrderItemDTO.setAmountUSD(new BigDecimal(3452));
         proformaInvoiceOrderItemDTO.setQuantity(130);
         proformaInvoiceOrderItemDTO.setCreateTime(new Date());
         proformaInvoiceMapper.insertProformaInvoiceItem(proformaInvoiceOrderItemDTO);
