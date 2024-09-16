@@ -1,6 +1,7 @@
 package com.wang.mgt.controller;
 
 import com.wang.dataload.dto.ProformaInvoiceDTO;
+import com.wang.dataload.dto.ProformaInvoiceOrderWithItem;
 import com.wang.mgt.service.MerchantService;
 import com.wang.mgt.service.ProformaInvoiceService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wang.dataload.dto.ImportMerchant;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -37,6 +40,14 @@ public class ProformaInvoiceController {
         ProformaInvoiceDTO proformaInvoiceDTO = proformaInvoiceService.searchProformaInvoiceByInvoiceNo("22W-012");
         System.out.println("proformaInvoiceDTO " + proformaInvoiceDTO.toString());
         return proformaInvoiceDTO;
+    }
+
+    @GetMapping("/findById")
+    public List<ProformaInvoiceOrderWithItem>   searchProformaInvoiceById(){
+        System.out.println("ProformaInvoiceController searchProformaInvoiceById ");
+        List<ProformaInvoiceOrderWithItem>  proformaInvoiceOrderWithItemList = proformaInvoiceService.selectProformaInvoiceWithItems(1);
+        System.out.println("proformaInvoiceOrderWithItemList " + proformaInvoiceOrderWithItemList.toString());
+        return proformaInvoiceOrderWithItemList;
     }
 
 

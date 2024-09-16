@@ -52,19 +52,74 @@
 
     <select id="searchProformaInvoiceByNum" resultType="com.wang.dataload.dto.ProformaInvoiceDTO">
         select t1.* from proforma_invoice t1
-        <include refid="whereProformaInvoice" />
+        <include refid="whereId" />
         order by t1.create_time desc
-
     </select>
 
-    <sql id="whereProformaInvoice">
+    <sql id="whereId">
         <where>
-            <if test="proformaInvoiceNum != null and proformaInvoiceNum != ''">
-                and t1.proforma_invoice_num = #{proformaInvoiceNum}
+            <if test="id != null and id != ''">
+                and t1.id = #{id}
             </if>
-
-        </where>
+      </where>
     </sql>
 
+    <select id="searchBrokerById" resultType="com.wang.dataload.dto.Broker">
+        select t1.* from broker t1
+        <include refid="whereId" />
+        order by t1.create_time desc
+    </select>
+
+    <select id="searchImportMerchantById" resultType="com.wang.dataload.dto.ImportMerchant">
+        select t1.* from import_merchant t1
+        <include refid="whereId" />
+        order by t1.create_time desc
+    </select>
+
+
+    <!-- Result map for OrderItem -->
+    <resultMap id="proformaInvoiceOrderItemResultMap" type="com.wang.dataload.dto.ProformaInvoiceOrderItemDTO">
+        <id property="id" column=" id"/>
+        <result property="proformaInvoiceOrderId" column="proforma_invoice_id"/>
+        <result property="productModel" column="product_model"/>
+        <result property="unitPriceRMB" column="unit_price_rmb"/>
+        <result property="unitPriceUSD" column="unit_price_usd"/>
+        <result property="amountUSD" column="amount_usd"/>
+        <result property="amountRMB" column="amount_rmb"/>
+        <result property="quantity" column="quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastUpdateDate" column="last_update_date"/>
+    </resultMap>
+
+    <!-- Result map for Order -->
+    <resultMap id="proformaInvoiceResultMap" type="com.wang.dataload.dto.ProformaInvoiceDTO">
+        <id property="id" column="id"/>
+        <result property="proformaInvoiceNum" column="proforma_invoice_num"/>
+        <result property="shippingMethod" column="shipping_method"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="importMerchant.id" column="import_merchant_id"/>
+        <result property="broker.id" column="broker_id"/>
+        <result property="remark" column="remark"/>
+        <result property="proformaInvoiceDate" column="proforma_invoice_date"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastUpdateDate" column="last_update_date"/>
+        <result property="proformaInvoiceTo" column="proforma_invoice_to"/>
+        <result property="proformaInvoiceFrom" column="proforma_invoice_from"/>
+        <collection property="proformaInvoiceOrderItemDTOList" ofType="com.wang.dataload.dto.ProformaInvoiceOrderItemDTO" resultMap="proformaInvoiceOrderItemResultMap"/>
+    </resultMap>
+
+    <!-- SQL Query to select Order with its OrderItems -->
+    <select id="selectProformaInvoiceWithItems" resultType="com.wang.dataload.dto.ProformaInvoiceOrderWithItem">
+        SELECT pi.id , pi.proforma_invoice_num ,pi.shipping_method ,
+        pi.payment_method , pi.proforma_invoice_date  ,
+
+        pioi.product_model,
+        pioi.unit_price_rmb  , pioi.unit_price_usd
+
+        FROM proforma_invoice pi
+        LEFT JOIN proforma_invoice_order_item pioi ON pi.id = pioi.proforma_invoice_id
+        WHERE pi.id = #{id}
+    </select>
 
 </mapper>
