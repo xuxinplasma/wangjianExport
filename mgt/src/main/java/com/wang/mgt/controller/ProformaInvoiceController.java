@@ -26,7 +26,7 @@ public class ProformaInvoiceController {
     @Autowired
     ProformaInvoiceService proformaInvoiceService;
 
-    @GetMapping
+    @GetMapping("/findMerchantByNum")
     public ImportMerchant searchMerchant(){
         System.out.println("ProformaInvoiceController searchMerchant ");
         ImportMerchant importMerchant = merchantService.listImporterMerchant(118);
@@ -34,7 +34,18 @@ public class ProformaInvoiceController {
         return importMerchant;
     }
 
-    @GetMapping("/findByNum")
+    @GetMapping("/findMerchant")
+    public ImportMerchant getMerchant(){
+        System.out.println("ProformaInvoiceController getMerchant ");
+        ImportMerchant importMerchant = new ImportMerchant();
+        importMerchant.setMerchantName("france");
+        importMerchant.setMerchantAddress("urvan visat");
+
+
+        return importMerchant;
+    }
+
+    @GetMapping("/findProformaInvoiceByNum")
     public ProformaInvoiceDTO searchProformaInvoice(){
         System.out.println("ProformaInvoiceController searchProformaInvoice ");
         ProformaInvoiceDTO proformaInvoiceDTO = proformaInvoiceService.searchProformaInvoiceByInvoiceNo("22W-012");
@@ -42,7 +53,7 @@ public class ProformaInvoiceController {
         return proformaInvoiceDTO;
     }
 
-    @GetMapping("/findById")
+    @GetMapping("/findProformaInvoiceById")
     public List<ProformaInvoiceOrderWithItem>   searchProformaInvoiceById(){
         System.out.println("ProformaInvoiceController searchProformaInvoiceById ");
         List<ProformaInvoiceOrderWithItem>  proformaInvoiceOrderWithItemList = proformaInvoiceService.selectProformaInvoiceWithItems(1);
