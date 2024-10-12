@@ -12,5 +12,5 @@ public interface ProformaInvoiceDAO {
 
     ProformaInvoiceDTO searchProformaInvoiceByNum(@Param("proformaInvoiceNum") String proformaInvoiceNum );
 
-    List<ProformaInvoiceOrderWithItem> selectProformaInvoiceWithItems(Integer id);
+    List<ProformaInvoiceOrderWithItem> selectProformaInvoiceWithItems(@Param("productModel") String productModel);
 }

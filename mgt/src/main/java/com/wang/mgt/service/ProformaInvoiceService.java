@@ -20,9 +20,9 @@ public class ProformaInvoiceService {
 
     }
 
-    public List<ProformaInvoiceOrderWithItem> selectProformaInvoiceWithItems(Integer id){
+    public List<ProformaInvoiceOrderWithItem> selectProformaInvoiceWithItems(String productModel){
         System.out.println("ProformaInvoiceService selectProformaInvoiceWithItems ");
-        return proformaInvoiceDAO.selectProformaInvoiceWithItems(id);
+        return proformaInvoiceDAO.selectProformaInvoiceWithItems(productModel);
 
     }
 }

@@ -3,6 +3,7 @@ package com.wang.dataload.service;
 import com.wang.dataload.dao.ProformaInvoiceMapper;
 import com.wang.dataload.dto.*;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Ignore
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest

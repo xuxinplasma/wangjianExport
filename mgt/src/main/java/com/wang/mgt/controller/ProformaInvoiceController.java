@@ -6,10 +6,9 @@ import com.wang.mgt.service.MerchantService;
 import com.wang.mgt.service.ProformaInvoiceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import org.apache.commons.io.IOUtils;
 
 import com.wang.dataload.dto.ImportMerchant;
 
@@ -40,7 +39,7 @@ public class ProformaInvoiceController {
         ImportMerchant importMerchant = new ImportMerchant();
         importMerchant.setMerchantName("france");
         importMerchant.setMerchantAddress("urvan visat");
-
+        IOUtils ioUtils = new IOUtils();
 
         return importMerchant;
     }
@@ -53,10 +52,10 @@ public class ProformaInvoiceController {
         return proformaInvoiceDTO;
     }
 
-    @GetMapping("/findProformaInvoiceById")
-    public List<ProformaInvoiceOrderWithItem>   searchProformaInvoiceById(){
+    @GetMapping("/findProformaInvoiceByProductModel/{productModel}")
+    public List<ProformaInvoiceOrderWithItem>   searchProformaInvoiceById(@PathVariable("productModel") String productModel){
         System.out.println("ProformaInvoiceController searchProformaInvoiceById ");
-        List<ProformaInvoiceOrderWithItem>  proformaInvoiceOrderWithItemList = proformaInvoiceService.selectProformaInvoiceWithItems(1);
+        List<ProformaInvoiceOrderWithItem>  proformaInvoiceOrderWithItemList = proformaInvoiceService.selectProformaInvoiceWithItems(productModel);
         System.out.println("proformaInvoiceOrderWithItemList " + proformaInvoiceOrderWithItemList.toString());
         return proformaInvoiceOrderWithItemList;
     }

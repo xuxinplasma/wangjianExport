@@ -18,9 +18,7 @@ public class ProformaInvoiceOrderWithItem {
 
     private String proformaInvoiceNum;
 
-    private String shippingMethod;
-
-    private String paymentMethod;
+    private String factoryOrderNumber;
 
     private Date proformaInvoiceDate;
 
@@ -29,5 +27,14 @@ public class ProformaInvoiceOrderWithItem {
     private BigDecimal unitPriceRMB;
 
     private BigDecimal unitPriceUSD;
+
+    private Integer invoiceQuantity;
+
+    private Integer factoryQuantity;
+
+    private BigDecimal amountUSD;
+
+    private BigDecimal amountRMB;
+
 
 }

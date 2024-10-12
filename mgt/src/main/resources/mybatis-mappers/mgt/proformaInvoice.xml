@@ -111,15 +111,13 @@
 
     <!-- SQL Query to select Order with its OrderItems -->
     <select id="selectProformaInvoiceWithItems" resultType="com.wang.dataload.dto.ProformaInvoiceOrderWithItem">
-        SELECT pi.id , pi.proforma_invoice_num ,pi.shipping_method ,
-        pi.payment_method , pi.proforma_invoice_date  ,
-
-        pioi.product_model,
-        pioi.unit_price_rmb  , pioi.unit_price_usd
-
+        SELECT pi.id , pi.proforma_invoice_num , fpo.factory_order_number, pioi.product_model ,pioi.unit_price_usd, pioi.amount_usd, pioi.quantity as invoiceQuantity,
+        fpoi.unit_price_rmb, fpoi.amount_rmb, fpoi.quantity as factoryQuantity,  pi.proforma_invoice_date
         FROM proforma_invoice pi
-        LEFT JOIN proforma_invoice_order_item pioi ON pi.id = pioi.proforma_invoice_id
-        WHERE pi.id = #{id}
+        INNER JOIN proforma_invoice_order_item pioi ON pi.id = pioi.proforma_invoice_id
+        INNER JOIN factory_purchase_order fpo ON pi.id = fpo.proforma_invoice_id
+        INNER JOIN factory_purchase_order_item fpoi ON fpo.id = fpoi.factory_purchase_order_id
+        WHERE  pioi.product_model LIKE CONCAT('%', #{productModel}, '%') and fpoi.product_model LIKE CONCAT('%', #{productModel}, '%');
     </select>
 
 </mapper>
