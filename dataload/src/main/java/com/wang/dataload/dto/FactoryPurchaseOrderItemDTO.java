@@ -19,7 +19,7 @@ public class FactoryPurchaseOrderItemDTO {
 
     private Integer factoryPurchaseOrderId;
 
-    private Integer productModelId;
+    private Product product;
 
     private BigDecimal unitPriceRMB;
 
