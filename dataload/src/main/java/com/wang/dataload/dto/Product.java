@@ -5,29 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class FactoryPurchaseOrderItemDTO {
+public class Product {
 
     private Integer id;
 
-    private Integer factoryPurchaseOrderId;
+    private String importProductModel;
 
-    private Integer productModelId;
-
-    private BigDecimal unitPriceRMB;
-
-    private BigDecimal amountRMB;
-
-    private Integer quantity;
-
-    private String remark;
+    private String exportProductModel;
 
     private Date createTime;
 

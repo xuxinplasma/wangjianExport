@@ -20,7 +20,7 @@ public class ProformaInvoiceOrderItemDTO {
 
     private Integer proformaInvoiceOrderId;
 
-    private String productModel;
+    private Integer productModelId;
 
     private BigDecimal unitPriceRMB;
 
