@@ -1,0 +1,40 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/wangjian
+      # 配置连接池
+      connection-pool:
+        max-size: 50  # 最大连接数
+        min-size: 10  # 最小连接数
+        max-wait-time: 120000  # 连接等待超时时间（毫秒）
+        max-connection-idle-time: 60000  # 连接空闲超时时间（毫秒）
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  mvc:
+    servlet:
+      load-on-startup: 1
+
+logging:
+  config: classpath:logback.xml
+log:
+  level:
+    root: info
+    my: debug
+  file: c:/paymgt/logs/paymgt.log
+  maxsize: 30MB
+server:
+  tomcat:
+    basedir: c:/paymgt/temp
+  port: 8092
+
+
+
+    
+    
