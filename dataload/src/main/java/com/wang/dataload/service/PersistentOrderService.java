@@ -51,6 +51,7 @@ public class PersistentOrderService {
         List<ProformaInvoiceOrderItemDTO> proformaInvoiceOrderItemDTOList = proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList();
         for (ProformaInvoiceOrderItemDTO proformaInvoiceOrderItemDTO : proformaInvoiceOrderItemDTOList) {
             log.debug("proformaInvoiceOrderItemDTO " + proformaInvoiceOrderItemDTO.toString());
+            proformaInvoiceMapper.insertProduct(proformaInvoiceOrderItemDTO.getProduct());
             proformaInvoiceOrderItemDTO.setProformaInvoiceOrderId(proformaInvoiceDTO.getId());
             proformaInvoiceMapper.insertProformaInvoiceItem(proformaInvoiceOrderItemDTO);
             log.debug("after save proformaInvoiceOrderItem  " + proformaInvoiceOrderItemDTO.getId());

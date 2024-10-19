@@ -131,7 +131,7 @@ public class DataFileImporter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        syncProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem();
         persistentOrderService.persistentOrder(proformaInvoiceDTO, factoryPurchaseOrderDTOList);
     }
 
@@ -191,6 +191,22 @@ public class DataFileImporter {
             default:
                 log.debug(" ");
         }
+    }
+
+    public void syncProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem(){
+        factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().forEach(factoryPurchaseOrderItemDTO ->
+                proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().stream()
+                        .filter(proformaInvoiceOrderItemDTO -> proformaInvoiceOrderItemDTO.getProduct().getImportProductModel()
+                                .equals(factoryPurchaseOrderItemDTO.getProduct().getImportProductModel()))
+                        .findFirst()
+                        .ifPresent(proformaInvoiceOrderItemDTO -> factoryPurchaseOrderItemDTO.getProduct().setId(proformaInvoiceOrderItemDTO.getProduct().getId()))
+        );
+
+        // 输出 OrderB 的 product 以验证
+        factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().forEach(orderItem ->
+               log.debug("factoryPurchaseOrderDTO Product Name: " + orderItem.getProduct().getImportProductModel() +
+                        ", Product ID: " + orderItem.getProduct().getId())
+        );
     }
 
 }

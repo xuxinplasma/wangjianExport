@@ -14,6 +14,8 @@ public interface ProformaInvoiceMapper {
 
         public  void insertExportMerchant(ExportMerchant exportMerchant);
 
+        public  void insertProduct(Product product);
+
         public void insertProformaInvoice(ProformaInvoiceDTO proformaInvoiceDTO);
 
         public void insertProformaInvoiceItem(ProformaInvoiceOrderItemDTO proformaInvoiceOrderItemDTO);

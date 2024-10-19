@@ -40,5 +40,10 @@ public class DataUtils {
 
     }
 
+    public static boolean  checkDigit(String item){
+        boolean containsNumber = item.matches(".*\\d.*");
+        return containsNumber;
+    }
+
 
 }

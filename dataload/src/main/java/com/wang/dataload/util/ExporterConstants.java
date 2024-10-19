@@ -5,7 +5,7 @@ import javax.print.DocFlavor;
 public interface ExporterConstants {
 
     String filePath = "F:\\xxhncs\\xxh\\wangjian\\22W-012 QG.xlsx";
-
+    //Proforma Invoice
     String PROFORMA_INVOICE = "PROFORMA INVOICE";
     String FACTORY_PURCHASE_ORDER = "出 口 产 品 采 购 合 同";
     String FACTORY_PURCHASE_ORDER_FORM = "订      单";
@@ -31,6 +31,9 @@ public interface ExporterConstants {
     String COLON_DELIMITOR = ":";
     String CHINESE_COLON_DELIMITOR = "：";
     String BLANK = "BLANK";
+    String TOTALS =  "TOTAL:";
+    String SAY = "SAY:";
+    String DELIVERY = "Delivery:";
 
     String BANK_INFORMATION = "Bank information:";
 
@@ -87,6 +90,7 @@ public interface ExporterConstants {
     String FACTORY_ORDER_FORM_REMARK = "要求：";
     String FACTORY_ORDER_FORM_ITEM_REMARK = "备注";
     String FACTORY_ORDER_FORM_ITEM_MODEL = "客户型号";
+    String FACTORY_ORDER_FORM_ITEM_SUMMARY = "总计";
     String FACTORY_ORDER_FORM_ITEM_QUANTITY = "数量(个）";
     String FACTORY_ORDER_FORM_ITEM_UNIT_PRICE= "单价(元)";
     String FACTORY_ORDER_FORM_ITEM_TOTAL = "合计(元)";
@@ -110,5 +114,10 @@ public interface ExporterConstants {
     String FACTORY_PURCHASE_ORDER_SIJIEER = "斯捷尔";
     String FACTORY_PURCHASE_ORDER_ZHANWANG = "展望";
 
-
+    //Product
+    String CENTER_BEARING_FROM = "CENTER BEARING FROM";
+    String CENTER_BEARING_FROM_CN = "中心支架";
+    String PURCHASE_ORDER = "Purchase Order";
+    String BOOT_KIT_FROM = "BOOT KIT FROM";
+    String BOOT_KIT_FROM_CN = "防尘罩附件包";
 }

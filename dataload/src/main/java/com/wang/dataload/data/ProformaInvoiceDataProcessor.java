@@ -1,9 +1,6 @@
 package com.wang.dataload.data;
 
-import com.wang.dataload.dto.Broker;
-import com.wang.dataload.dto.ImportMerchant;
-import com.wang.dataload.dto.ProformaInvoiceDTO;
-import com.wang.dataload.dto.ProformaInvoiceOrderItemDTO;
+import com.wang.dataload.dto.*;
 import com.wang.dataload.util.DataUtils;
 import com.wang.dataload.util.ExporterConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +36,8 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
 
     private Broker broker;
 
+    private Product product;
+
     private StringBuffer importerAddressSB;
 
     private StringBuffer brokerAddressSB;
@@ -53,7 +52,7 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
         if (cellValue instanceof String) {
             String cellValueStr = (String) cellValue;
             log.debug("PerfInvoiceDataProcessor string cell value " + cellValueStr);
-            if (cellValue.equals(ExporterConstants.PROFORMA_INVOICE_IMPORTER_TO)) {
+            if (cellValueStr.equals(ExporterConstants.PROFORMA_INVOICE_IMPORTER_TO)) {
                 importerAddressInd = true;
                 importerAddressSB = new StringBuffer("");
                 proformaInvoiceDTO = new ProformaInvoiceDTO();
@@ -66,21 +65,30 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
                 proformaInvoiceDTO.setBroker(broker);
                 proformaInvoiceDTO.setImportMerchant(importMerchant);
                 proformaInvoiceDTO.setProformaInvoiceOrderItemDTOList(proformaInvoiceOrderItemDTOList);
-            } else if (cellValue.equals(ExporterConstants.PROFORMA_INVOICE_BROKER_FROM)) {
+            } else if (cellValueStr.equals(ExporterConstants.PROFORMA_INVOICE_BROKER_FROM)) {
                 importerAddressInd = false;
                 proformaInvoiceDTO.getImportMerchant().setMerchantAddress(importerAddressSB.toString());
                 brokerAddressInd = true;
                 brokerAddressSB = new StringBuffer("");
-            } else if (cellValue.equals(ExporterConstants.PROFORMA_INVOICE_ORDER_ITEM_NOS)) {
+            } else if (cellValueStr.equals(ExporterConstants.PROFORMA_INVOICE_ORDER_ITEM_NOS)) {
                 brokerAddressInd = false;
                 proformaInvoiceDTO.getBroker().setBrokerOverseasAddress(brokerAddressSB.toString());
                 orderItemInd = true;
                 proformaInvoiceDTO.setRemark(marksSB.toString());
 
-            }else if (cellValue.equals(ExporterConstants.BANK_INFORMATION)) {
+            } else if(cellValueStr.equals(ExporterConstants.TOTALS)){
+                log.debug( "content is totals");
                 orderItemInd = false;
+            }
+            else if(cellValueStr.startsWith(ExporterConstants.SAY)){
+                log.debug( "content is says");
+            }
+            else if(cellValueStr.startsWith(ExporterConstants.DELIVERY)){
+                log.debug( "content is delivery");
+            }
 
-                brokerBankInd = true;
+            else if (cellValue.equals(ExporterConstants.BANK_INFORMATION)) {
+                 brokerBankInd = true;
            }
        }
         log.debug("orderItemInd " + orderItemInd);
@@ -183,7 +191,8 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
             cellValueStr = (String) cellValue;
             log.debug("PerfInvoiceDataProcessor order item   " + cellValueStr);
             if (cell.getColumnIndex() == ExporterConstants.DESCRIPTION_OF_GOODS_COLUMN) {
-                if (!cellValueStr.equals(ExporterConstants.DESCRIPTION_OF_GOODS)) {
+                boolean containDigit = DataUtils.checkDigit(cellValueStr);
+                if (!cellValueStr.equals(ExporterConstants.DESCRIPTION_OF_GOODS) && containDigit && !cellValueStr.contains(ExporterConstants.PURCHASE_ORDER)) {
                     log.debug("DESCRIPTION_OF_GOODS    " + cellValueStr);
                     if(proformaInvoiceOrderItemDTO != null) {
 
@@ -192,7 +201,30 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
                     }
                     proformaInvoiceOrderItemDTO = new ProformaInvoiceOrderItemDTO();
                     proformaInvoiceOrderItemDTO.setCreateTime(new Date());
-                    proformaInvoiceOrderItemDTO.setProductModel(cellValueStr);
+                    product = new Product();
+                    if(cellValueStr.contains("/")){
+                        String[] productModelArray = cellValueStr.split("/");
+                        if(cellValueStr.startsWith(ExporterConstants.CENTER_BEARING_FROM)){
+                            product.setImportProductModel(productModelArray[1]);
+                            product.setExportProductModel(productModelArray[0] + ExporterConstants.CENTER_BEARING_FROM_CN);
+                        }
+                        else if(cellValueStr.startsWith(ExporterConstants.BOOT_KIT_FROM)){
+                            product.setImportProductModel(productModelArray[1]);
+                            product.setExportProductModel(productModelArray[0] + ExporterConstants.BOOT_KIT_FROM_CN);
+                        }
+                        else{
+                            product.setImportProductModel(productModelArray[0]);
+                            product.setExportProductModel(productModelArray[1]);
+                        }
+
+                    }
+                    else {
+
+                        product.setImportProductModel(cellValueStr);
+                    }
+                    log.debug("product " + product.toString());
+                    product.setCreateTime(new Date());
+                    proformaInvoiceOrderItemDTO.setProduct(product);
                 }
             } else if (cell.getColumnIndex() == ExporterConstants.UNIT_PRICE_COLUMN) {
                 if (cellValueStr.equals(ExporterConstants.CIF_VANCOUVER_IN_USD)) {

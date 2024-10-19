@@ -30,6 +30,8 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
 
     private Broker broker;
 
+    private Product product;
+
     private StringBuffer remarkBF;
 
 
@@ -177,7 +179,7 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
             cellValueStr = (String) cellValue;
             log.debug("FactoryPurchaseOrderProcessor processFactoryOrderItem string cell value " + cellValueStr);
             if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_IMPORTER_MODELS_COLUMN) {
-                if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_ITEM_IMPORTER_MODELS)) {
+                if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_ITEM_IMPORTER_MODELS) && !cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_SUMMARY)){
                     log.debug("FACTORY_ORDER_ITEM_IMPORTER_MODELS    " + cellValueStr);
                     if (factoryPurchaseOrderItemDTO != null) {
 
@@ -186,14 +188,43 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
                     }
                     factoryPurchaseOrderItemDTO = new FactoryPurchaseOrderItemDTO();
                     factoryPurchaseOrderItemDTO.setCreateTime(new Date());
-                    factoryPurchaseOrderItemDTO.setProductModel(cellValueStr);
+                    product = new Product();
+                    if(cellValueStr.contains("/")){
+                        String[] productModelArray = cellValueStr.split("/");
+                        if(cellValueStr.startsWith(ExporterConstants.CENTER_BEARING_FROM)){
+                            product.setImportProductModel(productModelArray[1]);
+                            product.setExportProductModel(productModelArray[0] + ExporterConstants.CENTER_BEARING_FROM_CN);
+                        }
+                        else if(cellValueStr.startsWith(ExporterConstants.BOOT_KIT_FROM)){
+                            product.setImportProductModel(productModelArray[1]);
+                            product.setExportProductModel(productModelArray[0] + ExporterConstants.BOOT_KIT_FROM_CN);
+                        }
+
+                    }
+                    else {
+
+                        product.setImportProductModel(cellValueStr);
+                    }
+                    product.setCreateTime(new Date());
+
+                    factoryPurchaseOrderItemDTO.setProduct(product);
+                }
+                else if(cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_SUMMARY)){
+                    log.debug(" set factoryPurchaseOrderItemDTO to null for summary");
+                    factoryPurchaseOrderItemDTO = null;
                 }
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_EXPORTER_MODELS_COLUMN) {
-                if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_ITEM_EXPORTER_MODELS)) {
-                    log.debug("FACTORY_ORDER_ITEM_EXPORTER_MODELS   " + cellValueStr);
-
-                    factoryPurchaseOrderItemDTO.setRemark(cellValueStr);
+                boolean containDigit = DataUtils.checkDigit(cellValueStr);
+                if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_ITEM_EXPORTER_MODELS)){
+                    if(containDigit && !cellValueStr.equals(ExporterConstants.CENTER_BEARING_FROM) && !cellValueStr.equals(ExporterConstants.BOOT_KIT_FROM)) {
+                        log.debug("FACTORY_ORDER_ITEM_EXPORTER_MODELS   " + cellValueStr);
+                        product.setExportProductModel(cellValueStr);
+                    }
+                    else {
+                        factoryPurchaseOrderItemDTO.setRemark(cellValueStr);
+                    }
                 }
+
             }
         } else if (cellValue instanceof Double) {
             cellValueDouble = (Double) cellValue;
@@ -202,15 +233,21 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
 
                 log.debug("quantity   " + cellValueDouble);
                 Integer quantity = (int) cellValueDouble.doubleValue();
-                factoryPurchaseOrderItemDTO.setQuantity(quantity);
+                if (factoryPurchaseOrderItemDTO != null) {
+                    factoryPurchaseOrderItemDTO.setQuantity(quantity);
+                }
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_UNIT_PRICE_COLUMN) {
                 log.debug("unit price   " + cellValueDouble);
                 BigDecimal unitPrice = BigDecimal.valueOf(cellValueDouble.doubleValue());
-                factoryPurchaseOrderItemDTO.setUnitPriceRMB(unitPrice);
+                if (factoryPurchaseOrderItemDTO != null) {
+                    factoryPurchaseOrderItemDTO.setUnitPriceRMB(unitPrice);
+                }
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_TOTAL_COLUMN) {
                 BigDecimal amount = BigDecimal.valueOf(cellValueDouble.doubleValue());
                 log.debug("AMOUNT   " + amount);
-                factoryPurchaseOrderItemDTO.setAmountRMB(amount);
+                if (factoryPurchaseOrderItemDTO != null) {
+                    factoryPurchaseOrderItemDTO.setAmountRMB(amount);
+                }
             }
         }
 

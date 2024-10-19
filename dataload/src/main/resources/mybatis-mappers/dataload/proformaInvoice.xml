@@ -20,6 +20,11 @@
         VALUES (#{merchantName}, #{merchantAddress}, #{merchantPhone},#{createTime}, #{lastUpdateDate} )
     </insert>
 
+    <insert id="insertProduct" parameterType="com.wang.dataload.dto.Product" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO product (import_product_model, export_product_model, create_time, last_update_date)
+        VALUES (#{importProductModel}, #{exportProductModel},#{createTime}, #{lastUpdateDate} )
+    </insert>
+
     <!-- Insert parent entity, using the generated child ID -->
     <insert id="insertProformaInvoice" parameterType="com.wang.dataload.dto.ProformaInvoiceDTO" useGeneratedKeys="true" keyProperty="id">
         insert into proforma_invoice ( proforma_invoice_num , shipping_method, payment_method,import_merchant_id, broker_id,
@@ -29,9 +34,9 @@
     </insert>
 
     <insert id="insertProformaInvoiceItem" parameterType="com.wang.dataload.dto.ProformaInvoiceOrderItemDTO" useGeneratedKeys="true" keyProperty="id">
-        insert into proforma_invoice_order_item ( proforma_invoice_id , product_model, unit_price_rmb,unit_price_usd, amount_usd,
+        insert into proforma_invoice_order_item ( proforma_invoice_id , product_model_id, unit_price_rmb,unit_price_usd, amount_usd,
         amount_rmb, quantity, remark, create_time,last_update_date)
-        values(#{proformaInvoiceOrderId}, #{productModel}, #{unitPriceRMB},#{unitPriceUSD},#{amountUSD},
+        values(#{proformaInvoiceOrderId}, #{product.id}, #{unitPriceRMB},#{unitPriceUSD},#{amountUSD},
         #{amountRMB},#{quantity}, #{remark}, #{createTime},#{lastUpdateDate})
     </insert>
 
@@ -43,9 +48,9 @@
     </insert>
 
     <insert id="insertFactoryPurchaseOrderItem" parameterType="com.wang.dataload.dto.FactoryPurchaseOrderItemDTO" useGeneratedKeys="true" keyProperty="id">
-        insert into factory_purchase_order_item ( factory_purchase_order_id ,product_model, unit_price_rmb,
+        insert into factory_purchase_order_item ( factory_purchase_order_id ,product_model_id, unit_price_rmb,
         amount_rmb, quantity, remark, create_time,last_update_date)
-        values(#{factoryPurchaseOrderId},  #{productModel}, #{unitPriceRMB},
+        values(#{factoryPurchaseOrderId},  #{product.id}, #{unitPriceRMB},
         #{amountRMB},#{quantity}, #{remark}, #{createTime},#{lastUpdateDate})
     </insert>
 
