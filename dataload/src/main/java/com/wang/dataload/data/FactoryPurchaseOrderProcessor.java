@@ -20,6 +20,8 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
 
     private boolean orderItemInd = false;
 
+    private boolean orderInd = false;
+
     private FactoryPurchaseOrderDTO factoryPurchaseOrderDTO;
 
     private FactoryPurchaseOrderItemDTO factoryPurchaseOrderItemDTO;
@@ -51,48 +53,60 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
         if (cellValue instanceof String) {
             String cellValueStr = (String) cellValue;
             log.debug("FactoryPurchaseOrderProcessor string cell value " + cellValueStr);
+            if (cellValueStr.contains(ExporterConstants.FACTORY_ORDER_NO)) {
+                orderInd = true;
+
+            }
             if (cellValue.equals(ExporterConstants.FACTORY_ORDER_REMARK)) {
                 remarkInd = true;
+                orderInd = false;
                 remarkBF = new StringBuffer();
             } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_ITEM_IMPORTER_MODELS)) {
                 orderItemInd = true;
-            } else if (((String) cellValue).contains(ExporterConstants.FACTORY_ORDER_REMARK_2)) {
+                remarkInd = false;
+             } else if (cellValueStr.contains(ExporterConstants.FACTORY_ORDER_FORM_ITEM_SUMMARY)) {
                 orderItemInd = false;
+            }else if (cellValueStr.contains(ExporterConstants.FACTORY_ORDER_REMARK_2)) {
+                remarkInd = true;
             }
             else if (((String) cellValue).contains(ExporterConstants.FACTORY_ORDER_SELL_STAMP)) {
                 remarkInd = false;
                 factoryPurchaseOrderDTO.setRemark(remarkBF.toString());
             }
-            else {
-                if(factoryPurchaseOrderDTO == null) {
-                    factoryPurchaseOrderDTO = new FactoryPurchaseOrderDTO();
-                    factoryPurchaseOrderDTO.setCreateTime(new Date());
-                    broker = new Broker();
-                    broker.setCreateTime(new Date());
-                    factoryPurchaseOrderDTO.setBroker(broker);
-                    exportMerchant = new ExportMerchant();
-                    exportMerchant.setCreateTime(new Date());
-                    factoryPurchaseOrderDTO.setExportMerchant(exportMerchant);
-                    factoryPurchaseOrderItemDTOList = new ArrayList<FactoryPurchaseOrderItemDTO>();
-                    factoryPurchaseOrderDTO.setFactoryPurchaseOrderItemDTOList(factoryPurchaseOrderItemDTOList);
-                }
-                }
+
         }
-        if (orderItemInd & remarkInd) {
-            processFactoryOrderItem(cell);
-        } else if (remarkInd & !orderItemInd) {
-            log.debug("PerfInvoiceDataProcessor call processFactoryOrderRemark ");
-            processFactoryOrderRemark(cell);
-        } else {
+        if(orderInd){
             processFactoryOrder(cell);
         }
-        log.debug("factoryPurchaseOrderDTO " + factoryPurchaseOrderDTO.toString());
+        else if (orderItemInd) {
+            processFactoryOrderItem(cell);
+        } else if (remarkInd) {
+            log.debug("PerfInvoiceDataProcessor call processFactoryOrderRemark ");
+            processFactoryOrderRemark(cell);
+        }
+
+    }
+
+    private void initPurchaseOrder(){
+        if(factoryPurchaseOrderDTO == null) {
+            factoryPurchaseOrderDTO = new FactoryPurchaseOrderDTO();
+            factoryPurchaseOrderDTO.setCreateTime(new Date());
+            broker = new Broker();
+            broker.setCreateTime(new Date());
+            factoryPurchaseOrderDTO.setBroker(broker);
+            exportMerchant = new ExportMerchant();
+            exportMerchant.setCreateTime(new Date());
+            factoryPurchaseOrderDTO.setExportMerchant(exportMerchant);
+            factoryPurchaseOrderItemDTOList = new ArrayList<FactoryPurchaseOrderItemDTO>();
+            factoryPurchaseOrderDTO.setFactoryPurchaseOrderItemDTOList(factoryPurchaseOrderItemDTOList);
+        }
     }
 
     private void processFactoryOrder(Cell cell) {
         log.debug("process factory order column " + cell.getColumnIndex());
         Object cellValue = DataUtils.getCellValue(cell);
         String cellValueStr = null;
+        initPurchaseOrder();
         try {
             if (cellValue instanceof String) {
                 cellValueStr = (String) cellValue;
@@ -121,14 +135,16 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
 
                     factoryPurchaseOrderDTO.setFactoryOrderDate(localDate);
                 } else if (cellValueStr.contains(ExporterConstants.FACTORY_ORDER_BROKER_NAME)) {
-                    log.debug("enter FACTORY_ORDER_BROKER_NAME ");
+                    log.debug("enter FACTORY_ORDER_BROKER_NAME cellValueStr " + cellValueStr);
                     String[] factoryOrderBrokerNameParts = cellValueStr.split(ExporterConstants.CHINESE_COLON_DELIMITOR);
+                    log.debug("enter FACTORY_ORDER_BROKER_NAME factoryPurchaseOrderDTO.getBroker() " + factoryPurchaseOrderDTO.getBroker());
                     factoryPurchaseOrderDTO.getBroker().setBrokerDomesticName(factoryOrderBrokerNameParts[1].trim());
                     log.debug("factoryOrderBrokerNameParts " + factoryOrderBrokerNameParts[1].trim());
 
                 } else if (cellValueStr.contains(ExporterConstants.FACTORY_ORDER_EXPORTER_NAME)) {
-                    log.debug("enter FACTORY_ORDER_EXPORTER_NAME ");
+                    log.debug("enter FACTORY_ORDER_EXPORTER_NAME cellValueStr " + cellValueStr);
                     String[] factoryOrderExporterNameParts = cellValueStr.split(ExporterConstants.CHINESE_COLON_DELIMITOR);
+                    log.debug("enter FACTORY_ORDER_EXPORTER_NAME factoryPurchaseOrderDTO.getExportMerchant() " + factoryPurchaseOrderDTO.getExportMerchant());
                     factoryPurchaseOrderDTO.getExportMerchant().setMerchantName(factoryOrderExporterNameParts[1].trim());
                     log.debug("factoryOrderExporterNameParts " + factoryOrderExporterNameParts[1].trim());
 
@@ -181,23 +197,18 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
             if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_IMPORTER_MODELS_COLUMN) {
                 if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_ITEM_IMPORTER_MODELS) && !cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_SUMMARY)){
                     log.debug("FACTORY_ORDER_ITEM_IMPORTER_MODELS    " + cellValueStr);
-                    if (factoryPurchaseOrderItemDTO != null) {
-
-                        factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().add(factoryPurchaseOrderItemDTO);
-                        log.debug("getFactoryPurchaseOrderItemDTOList " + factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().toString());
-                    }
                     factoryPurchaseOrderItemDTO = new FactoryPurchaseOrderItemDTO();
                     factoryPurchaseOrderItemDTO.setCreateTime(new Date());
                     product = new Product();
                     if(cellValueStr.contains("/")){
                         String[] productModelArray = cellValueStr.split("/");
                         if(cellValueStr.startsWith(ExporterConstants.CENTER_BEARING_FROM)){
-                            product.setImportProductModel(productModelArray[1]);
-                            product.setExportProductModel(productModelArray[0] + ExporterConstants.CENTER_BEARING_FROM_CN);
+                            product.setImportProductModel(productModelArray[1].trim());
+                            product.setExportProductModel(productModelArray[0].trim() + ExporterConstants.CENTER_BEARING_FROM_CN);
                         }
                         else if(cellValueStr.startsWith(ExporterConstants.BOOT_KIT_FROM)){
-                            product.setImportProductModel(productModelArray[1]);
-                            product.setExportProductModel(productModelArray[0] + ExporterConstants.BOOT_KIT_FROM_CN);
+                            product.setImportProductModel(productModelArray[1].trim());
+                            product.setExportProductModel(productModelArray[0].trim() + ExporterConstants.BOOT_KIT_FROM_CN);
                         }
 
                     }
@@ -233,21 +244,21 @@ public class FactoryPurchaseOrderProcessor implements DataProcessor {
 
                 log.debug("quantity   " + cellValueDouble);
                 Integer quantity = (int) cellValueDouble.doubleValue();
-                if (factoryPurchaseOrderItemDTO != null) {
                     factoryPurchaseOrderItemDTO.setQuantity(quantity);
-                }
+
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_UNIT_PRICE_COLUMN) {
                 log.debug("unit price   " + cellValueDouble);
                 BigDecimal unitPrice = BigDecimal.valueOf(cellValueDouble.doubleValue());
-                if (factoryPurchaseOrderItemDTO != null) {
                     factoryPurchaseOrderItemDTO.setUnitPriceRMB(unitPrice);
-                }
+
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_ITEM_TOTAL_COLUMN) {
                 BigDecimal amount = BigDecimal.valueOf(cellValueDouble.doubleValue());
                 log.debug("AMOUNT   " + amount);
-                if (factoryPurchaseOrderItemDTO != null) {
                     factoryPurchaseOrderItemDTO.setAmountRMB(amount);
-                }
+                    factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().add(factoryPurchaseOrderItemDTO);
+                    log.debug("getFactoryPurchaseOrderItemDTOList " + factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().toString());
+
+
             }
         }
 

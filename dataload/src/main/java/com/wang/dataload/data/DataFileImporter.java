@@ -131,7 +131,7 @@ public class DataFileImporter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        syncProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem();
+
         persistentOrderService.persistentOrder(proformaInvoiceDTO, factoryPurchaseOrderDTOList);
     }
 
@@ -156,6 +156,7 @@ public class DataFileImporter {
                     exportDataType = ExporterConstants.FACTORY_PURCHASE_ORDER;
                     dataProcessor = ExporterDataProcessorFactory.createProduct(exportDataType);
                 } else if (StringUtils.equals(cellValue, ExporterConstants.FACTORY_PURCHASE_ORDER_FORM)) {
+                    log.debug("start to process factory purchase order form");
 
                     exportDataType = ExporterConstants.FACTORY_PURCHASE_ORDER_FORM;
                     dataProcessor = ExporterDataProcessorFactory.createProduct(exportDataType);
@@ -194,13 +195,30 @@ public class DataFileImporter {
     }
 
     public void syncProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem(){
-        factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().forEach(factoryPurchaseOrderItemDTO ->
-                proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().stream()
-                        .filter(proformaInvoiceOrderItemDTO -> proformaInvoiceOrderItemDTO.getProduct().getImportProductModel()
-                                .equals(factoryPurchaseOrderItemDTO.getProduct().getImportProductModel()))
-                        .findFirst()
-                        .ifPresent(proformaInvoiceOrderItemDTO -> factoryPurchaseOrderItemDTO.getProduct().setId(proformaInvoiceOrderItemDTO.getProduct().getId()))
-        );
+        log.debug("start to sync ProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem");
+        log.debug("factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList()" + factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().toString());
+        factoryPurchaseOrderDTOList.forEach(factoryPurchaseOrderDTO ->{
+            factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().forEach(factoryPurchaseOrderItemDTO -> {
+                    log.debug("factoryPurchaseOrderItemDTO "+ factoryPurchaseOrderItemDTO.toString());
+
+                    proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().stream()
+                            .filter(proformaInvoiceOrderItemDTO -> {
+                                boolean isMatch = proformaInvoiceOrderItemDTO.getProduct().getImportProductModel()
+                                        .equals(factoryPurchaseOrderItemDTO.getProduct().getImportProductModel());
+                                log.debug("Comparing Proforma Product Model: {} with Factory Product Model: {}, Match: {}",
+                                        proformaInvoiceOrderItemDTO.getProduct().getImportProductModel(),
+                                        factoryPurchaseOrderItemDTO.getProduct().getImportProductModel(),
+                                        isMatch);
+                                return isMatch;
+                            })
+                            .findFirst()
+                            .ifPresent(proformaInvoiceOrderItemDTO -> {
+                                factoryPurchaseOrderItemDTO.getProduct().setId(proformaInvoiceOrderItemDTO.getProduct().getId());
+                                log.debug("Set Product ID: {} to Factory Purchase Order Item", proformaInvoiceOrderItemDTO.getProduct().getId());
+
+                            });
+            });
+        });
 
         // 输出 OrderB 的 product 以验证
         factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().forEach(orderItem ->

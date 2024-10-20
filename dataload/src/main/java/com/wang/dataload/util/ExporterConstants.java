@@ -41,7 +41,9 @@ public interface ExporterConstants {
     String PROFORMA_INVOICE_ORDER_ITEM_NOS = "Nos.";
     String DESCRIPTION_OF_GOODS = "Description of goods";
     String QUANTITY = "Quantity";
-
+    String DRIVESHAFT_ASSEMBLY = "DRIVESHAFT ASSEMBLY";
+    String DRIVESHAFT_YOKE = "DRIVESHAFT YOKE";
+    String UNIVERSAL_JOINT = "UNIVERSAL JOINT";
     String UNIT_PRICE = "Unit price";
     String AMOUNT = "Amount";
     String PCS = "PCS";
@@ -94,6 +96,7 @@ public interface ExporterConstants {
     String FACTORY_ORDER_FORM_ITEM_QUANTITY = "数量(个）";
     String FACTORY_ORDER_FORM_ITEM_UNIT_PRICE= "单价(元)";
     String FACTORY_ORDER_FORM_ITEM_TOTAL = "合计(元)";
+    String FACTORY_ORDER_FORM_ITEM_TOTALS = "合计：";
     String WANGJIAN_EOD = "汪健 2022-4-26";
 
 

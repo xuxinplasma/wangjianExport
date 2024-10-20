@@ -76,21 +76,17 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
                 orderItemInd = true;
                 proformaInvoiceDTO.setRemark(marksSB.toString());
 
-            } else if(cellValueStr.equals(ExporterConstants.TOTALS)){
-                log.debug( "content is totals");
+            } else if (cellValueStr.equals(ExporterConstants.TOTALS)) {
+                log.debug("content is totals");
                 orderItemInd = false;
+            } else if (cellValueStr.startsWith(ExporterConstants.SAY)) {
+                log.debug("content is says");
+            } else if (cellValueStr.startsWith(ExporterConstants.DELIVERY)) {
+                log.debug("content is delivery");
+            } else if (cellValue.equals(ExporterConstants.BANK_INFORMATION)) {
+                brokerBankInd = true;
             }
-            else if(cellValueStr.startsWith(ExporterConstants.SAY)){
-                log.debug( "content is says");
-            }
-            else if(cellValueStr.startsWith(ExporterConstants.DELIVERY)){
-                log.debug( "content is delivery");
-            }
-
-            else if (cellValue.equals(ExporterConstants.BANK_INFORMATION)) {
-                 brokerBankInd = true;
-           }
-       }
+        }
         log.debug("orderItemInd " + orderItemInd);
         if (importerAddressInd) {
             processImporterAddress(cell);
@@ -99,11 +95,11 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
             processBrokerAddress(cell);
         } else if (orderItemInd) {
             processOrderItem(cell);
-        } else if(brokerBankInd){
+        } else if (brokerBankInd) {
             processBrokerBank(cell);
         }
-        if(proformaInvoiceDTO != null)
-          log.debug("proformaInvoiceDTO " + proformaInvoiceDTO.toString());
+        if (proformaInvoiceDTO != null)
+            log.debug("proformaInvoiceDTO " + proformaInvoiceDTO.toString());
 
     }
 
@@ -159,7 +155,7 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
             log.debug("PerfInvoiceDataProcessor brokerAddress  " + cellValueStr);
             if (cell.getColumnIndex() == ExporterConstants.PROFORMA_INVOICE_BROKER_FROM_COLUMN) {
 
-                brokerAddressSB.append(cellValueStr + "\n") ;
+                brokerAddressSB.append(cellValueStr + "\n");
             } else if (cellValueStr.contains(ExporterConstants.PROFORMA_INVOICE_FROM) && cellValueStr.contains(ExporterConstants.PROFORMA_INVOICE_TO)) {
                 int toIndex = cellValueStr.indexOf(ExporterConstants.PROFORMA_INVOICE_TO);
                 String proformaInvoiceFrom = cellValueStr.substring(0, toIndex);
@@ -180,7 +176,7 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
                 marksSB.append(cellValueStr + "\n");
             }
         }
-   }
+    }
 
     public void processOrderItem(Cell cell) {
         log.debug("order itemcolumn " + cell.getColumnIndex());
@@ -192,33 +188,30 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
             log.debug("PerfInvoiceDataProcessor order item   " + cellValueStr);
             if (cell.getColumnIndex() == ExporterConstants.DESCRIPTION_OF_GOODS_COLUMN) {
                 boolean containDigit = DataUtils.checkDigit(cellValueStr);
-                if (!cellValueStr.equals(ExporterConstants.DESCRIPTION_OF_GOODS) && containDigit && !cellValueStr.contains(ExporterConstants.PURCHASE_ORDER)) {
+                if (!cellValueStr.equals(ExporterConstants.DESCRIPTION_OF_GOODS) && containDigit
+                        && !cellValueStr.contains(ExporterConstants.PURCHASE_ORDER)
+                        && !cellValueStr.equals(ExporterConstants.DRIVESHAFT_ASSEMBLY)
+                        && !cellValueStr.equals(ExporterConstants.DRIVESHAFT_YOKE)
+                        && !cellValueStr.equals(ExporterConstants.UNIVERSAL_JOINT)) {
                     log.debug("DESCRIPTION_OF_GOODS    " + cellValueStr);
-                    if(proformaInvoiceOrderItemDTO != null) {
 
-                        proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().add(proformaInvoiceOrderItemDTO);
-                        log.debug("getProformaInvoiceOrderItemDTOList " + proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().toString());
-                    }
                     proformaInvoiceOrderItemDTO = new ProformaInvoiceOrderItemDTO();
                     proformaInvoiceOrderItemDTO.setCreateTime(new Date());
                     product = new Product();
-                    if(cellValueStr.contains("/")){
+                    if (cellValueStr.contains("/")) {
                         String[] productModelArray = cellValueStr.split("/");
-                        if(cellValueStr.startsWith(ExporterConstants.CENTER_BEARING_FROM)){
-                            product.setImportProductModel(productModelArray[1]);
-                            product.setExportProductModel(productModelArray[0] + ExporterConstants.CENTER_BEARING_FROM_CN);
-                        }
-                        else if(cellValueStr.startsWith(ExporterConstants.BOOT_KIT_FROM)){
-                            product.setImportProductModel(productModelArray[1]);
-                            product.setExportProductModel(productModelArray[0] + ExporterConstants.BOOT_KIT_FROM_CN);
-                        }
-                        else{
-                            product.setImportProductModel(productModelArray[0]);
-                            product.setExportProductModel(productModelArray[1]);
+                        if (cellValueStr.startsWith(ExporterConstants.CENTER_BEARING_FROM)) {
+                            product.setImportProductModel(productModelArray[1].trim());
+                            product.setExportProductModel(productModelArray[0].trim() + ExporterConstants.CENTER_BEARING_FROM_CN);
+                        } else if (cellValueStr.startsWith(ExporterConstants.BOOT_KIT_FROM)) {
+                            product.setImportProductModel(productModelArray[1].trim());
+                            product.setExportProductModel(productModelArray[0].trim() + ExporterConstants.BOOT_KIT_FROM_CN);
+                        } else {
+                            product.setImportProductModel(productModelArray[0].trim());
+                            product.setExportProductModel(productModelArray[1].trim());
                         }
 
-                    }
-                    else {
+                    } else {
 
                         product.setImportProductModel(cellValueStr);
                     }
@@ -231,36 +224,30 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
                     proformaInvoiceDTO.setRemark(proformaInvoiceDTO.getRemark() + "\n" + cellValueStr);
 
                 }
-            } else if (cell.getColumnIndex() == ExporterConstants.AMOUNT_COLUMN) {
-                log.debug("AMOUNT   " + cellValueStr);
-                if (!cellValueStr.equals(ExporterConstants.AMOUNT)) {
-                    long quantity = proformaInvoiceOrderItemDTO.getQuantity().longValue();
-                    BigDecimal amount = proformaInvoiceOrderItemDTO.getUnitPriceUSD().multiply(BigDecimal.valueOf(quantity));
-                    proformaInvoiceOrderItemDTO.setAmountUSD(amount);
-             }
-         }
+            }
         } else if (cellValue instanceof Double) {
             cellValueDouble = (Double) cellValue;
-           if (cell.getColumnIndex() == ExporterConstants.QUANTITY_COLUMN) {
+            if (cell.getColumnIndex() == ExporterConstants.QUANTITY_COLUMN) {
                 log.debug("quantity   " + cellValueDouble);
                 Integer quantity = (int) cellValueDouble.doubleValue();
                 proformaInvoiceOrderItemDTO.setQuantity(quantity);
-          }
-            else if (cell.getColumnIndex() == ExporterConstants.UNIT_PRICE_COLUMN) {
+            } else if (cell.getColumnIndex() == ExporterConstants.UNIT_PRICE_COLUMN) {
                 log.debug("unit price   " + cellValueDouble);
                 BigDecimal unitPrice = BigDecimal.valueOf(cellValueDouble.doubleValue());
                 proformaInvoiceOrderItemDTO.setUnitPriceUSD(unitPrice);
-         }
-            else if (cell.getColumnIndex() == ExporterConstants.AMOUNT_COLUMN) {
-             BigDecimal amount = BigDecimal.valueOf(cellValueDouble.doubleValue());
+            } else if (cell.getColumnIndex() == ExporterConstants.AMOUNT_COLUMN) {
+                BigDecimal amount = BigDecimal.valueOf(cellValueDouble.doubleValue());
                 log.debug("AMOUNT   " + amount);
-                    proformaInvoiceOrderItemDTO.setAmountUSD(amount);
-             }
+                proformaInvoiceOrderItemDTO.setAmountUSD(amount);
+                proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().add(proformaInvoiceOrderItemDTO);
+                log.debug("getProformaInvoiceOrderItemDTOList " + proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().toString());
+
+            }
         }
-        if(proformaInvoiceOrderItemDTO != null) {
+        if (proformaInvoiceOrderItemDTO != null) {
             log.debug("processOrderItem proformaInvoiceOrderItemDTO " + proformaInvoiceOrderItemDTO.toString());
         }
-   }
+    }
 
     public void processBrokerBank(Cell cell) {
         log.debug("broker bank column " + cell.getColumnIndex());
@@ -269,23 +256,20 @@ public class ProformaInvoiceDataProcessor implements DataProcessor {
         if (cellValue instanceof String) {
             cellValueStr = (String) cellValue;
             log.debug("PerfInvoiceDataProcessor brokerBank  " + cellValueStr);
-            if (cellValueStr.contains(ExporterConstants.BROKER_BANK_NAME) ) {
-           String[] brokerBankName = cellValueStr.split(":");
-               proformaInvoiceDTO.getBroker().setBankName(brokerBankName[1].trim());
+            if (cellValueStr.contains(ExporterConstants.BROKER_BANK_NAME)) {
+                String[] brokerBankName = cellValueStr.split(":");
+                proformaInvoiceDTO.getBroker().setBankName(brokerBankName[1].trim());
 
-            } else if (cellValueStr.contains(ExporterConstants.BANK_ADDRESS) ) {
-          String[] brokerBankAddress = cellValueStr.split(":");
+            } else if (cellValueStr.contains(ExporterConstants.BANK_ADDRESS)) {
+                String[] brokerBankAddress = cellValueStr.split(":");
                 proformaInvoiceDTO.getBroker().setBankAddress(brokerBankAddress[1].trim());
-            }
-            else if (cellValueStr.contains(ExporterConstants.SWIFT_CODE) ) {
+            } else if (cellValueStr.contains(ExporterConstants.SWIFT_CODE)) {
                 String[] brokerSwiftCode = cellValueStr.split(":");
                 proformaInvoiceDTO.getBroker().setSwiftCode(brokerSwiftCode[1].trim());
-            }
-            else if (cellValueStr.contains(ExporterConstants.COMPANY) ) {
+            } else if (cellValueStr.contains(ExporterConstants.COMPANY)) {
                 String[] brokerCompany = cellValueStr.split(":");
                 proformaInvoiceDTO.getBroker().setBrokerOverseasName(brokerCompany[1].trim());
-            }
-            else if (cellValueStr.contains(ExporterConstants.ACCOUNT_NUMBER) ) {
+            } else if (cellValueStr.contains(ExporterConstants.ACCOUNT_NUMBER)) {
                 String[] brokerAccountNumber = cellValueStr.split(":");
                 proformaInvoiceDTO.getBroker().setBankAccount(brokerAccountNumber[1].trim());
             }

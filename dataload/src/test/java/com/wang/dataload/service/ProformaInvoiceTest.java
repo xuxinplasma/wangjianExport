@@ -142,9 +142,11 @@ public class ProformaInvoiceTest {
     @Test
     public void insertProformaInvoiceOrderItem(){
         log.debug("before save proformaInvoiceOrderItem");
+        Product product = new Product();
+        product.setExportProductModel("1234");
         ProformaInvoiceOrderItemDTO proformaInvoiceOrderItemDTO = new ProformaInvoiceOrderItemDTO();
         proformaInvoiceOrderItemDTO.setProformaInvoiceOrderId(1);
-        proformaInvoiceOrderItemDTO.setProductModel("model1");
+        proformaInvoiceOrderItemDTO.setProduct(product);
         proformaInvoiceOrderItemDTO.setUnitPriceRMB(new BigDecimal("111"));
         //proformaInvoiceOrderItemDTO.setUnitPriceUSD(new BigDecimal(23));
         //proformaInvoiceOrderItemDTO.setAmountRMB(new BigDecimal(124423));
@@ -159,9 +161,11 @@ public class ProformaInvoiceTest {
     @Test
     public void insertFactoryPurchaseOrderItem(){
         log.debug("before save factoryPurchaseOrderItem");
+        Product product = new Product();
+        product.setExportProductModel("1234");
         FactoryPurchaseOrderItemDTO factoryPurchaseOrderItemDTO = new FactoryPurchaseOrderItemDTO();
         factoryPurchaseOrderItemDTO.setFactoryPurchaseOrderId(1);
-        factoryPurchaseOrderItemDTO.setProductModel("model2");
+        factoryPurchaseOrderItemDTO.setProduct(product);
         factoryPurchaseOrderItemDTO.setUnitPriceRMB(new BigDecimal("123"));
         factoryPurchaseOrderItemDTO.setAmountRMB(new BigDecimal(1253423));
         factoryPurchaseOrderItemDTO.setQuantity(342);

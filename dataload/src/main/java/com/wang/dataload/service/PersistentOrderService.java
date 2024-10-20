@@ -34,12 +34,14 @@ public class PersistentOrderService {
 
     @Transactional
     public void persistentOrder(ProformaInvoiceDTO proformaInvoiceDTO, List<FactoryPurchaseOrderDTO> factoryPurchaseOrderDTOList) {
-        saveProformaInvoice(proformaInvoiceDTO);
-        saveFactoryPurchaseOrder(factoryPurchaseOrderDTOList, proformaInvoiceDTO.getId());
+        log.debug("start to persistent order");
+        ProformaInvoiceDTO proformaInvoiceDTO1 = saveProformaInvoice(proformaInvoiceDTO);
+        List<FactoryPurchaseOrderDTO> factoryPurchaseOrderDTOList1 = syncProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem(proformaInvoiceDTO1, factoryPurchaseOrderDTOList);
+        saveFactoryPurchaseOrder(factoryPurchaseOrderDTOList1, proformaInvoiceDTO1.getId());
     }
 
     @Transactional
-    public void saveProformaInvoice(ProformaInvoiceDTO proformaInvoiceDTO) {
+    public ProformaInvoiceDTO saveProformaInvoice(ProformaInvoiceDTO proformaInvoiceDTO) {
         log.debug("proformaInvoiceDTO " + proformaInvoiceDTO.toString());
         proformaInvoiceMapper.insertBroker(proformaInvoiceDTO.getBroker());
         log.debug("after save broker " + proformaInvoiceDTO.getBroker().getId());
@@ -56,7 +58,7 @@ public class PersistentOrderService {
             proformaInvoiceMapper.insertProformaInvoiceItem(proformaInvoiceOrderItemDTO);
             log.debug("after save proformaInvoiceOrderItem  " + proformaInvoiceOrderItemDTO.getId());
         }
-
+        return proformaInvoiceDTO;
     }
 
 
@@ -82,6 +84,41 @@ public class PersistentOrderService {
 
         }
 
+    }
+
+    public List<FactoryPurchaseOrderDTO> syncProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem(ProformaInvoiceDTO proformaInvoiceDTO, List<FactoryPurchaseOrderDTO> factoryPurchaseOrderDTOList){
+        log.debug("start to sync ProformaInvoiceOrderItemProductIdWithFactoryPurchaseOrderItem");
+        factoryPurchaseOrderDTOList.forEach(factoryPurchaseOrderDTO ->{
+            factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().forEach(factoryPurchaseOrderItemDTO -> {
+                log.debug("factoryPurchaseOrderItemDTO "+ factoryPurchaseOrderItemDTO.toString());
+
+                proformaInvoiceDTO.getProformaInvoiceOrderItemDTOList().stream()
+                        .filter(proformaInvoiceOrderItemDTO -> {
+                            boolean isMatch = proformaInvoiceOrderItemDTO.getProduct().getImportProductModel()
+                                    .equals(factoryPurchaseOrderItemDTO.getProduct().getImportProductModel());
+                            log.debug("Comparing Proforma Product Model: {} with Factory Product Model: {}, Match: {}",
+                                    proformaInvoiceOrderItemDTO.getProduct().getImportProductModel(),
+                                    factoryPurchaseOrderItemDTO.getProduct().getImportProductModel(),
+                                    isMatch);
+                            return isMatch;
+                        })
+                        .findFirst()
+                        .ifPresent(proformaInvoiceOrderItemDTO -> {
+                            factoryPurchaseOrderItemDTO.getProduct().setId(proformaInvoiceOrderItemDTO.getProduct().getId());
+                            log.debug("Set Product ID: {} to Factory Purchase Order Item", proformaInvoiceOrderItemDTO.getProduct().getId());
+
+                        });
+            });
+        });
+
+        // 输出 OrderB 的 product 以验证
+        factoryPurchaseOrderDTOList.forEach(factoryPurchaseOrderDTO -> {
+            factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().forEach(orderItem ->
+                    log.debug("factoryPurchaseOrderDTO Product Name: " + orderItem.getProduct().getImportProductModel() +
+                            ", Product ID: " + orderItem.getProduct().getId())
+            );
+        });
+        return factoryPurchaseOrderDTOList;
     }
 
 }

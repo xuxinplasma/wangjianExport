@@ -1,9 +1,6 @@
 package com.wang.dataload.data;
 
-import com.wang.dataload.dto.Broker;
-import com.wang.dataload.dto.ExportMerchant;
-import com.wang.dataload.dto.FactoryPurchaseOrderDTO;
-import com.wang.dataload.dto.FactoryPurchaseOrderItemDTO;
+import com.wang.dataload.dto.*;
 import com.wang.dataload.util.DataUtils;
 import com.wang.dataload.util.ExporterConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +36,8 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
 
     private Broker broker;
 
+    private Product product;
+
     private StringBuffer remarkBF;
 
     private StringBuffer packageBF;
@@ -59,13 +58,18 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
             if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_REMARK)) {
                 log.debug(" set order form remark ind");
                 remarkInd = true;
-                orderFormItemInd = false;
                 remarkBF = new StringBuffer();
             } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_START)) {
                 log.debug(" set order form item ind");
                 exporterMerchantInd = false;
                 orderFormItemInd = true;
-            } else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_DELIVERY)) {
+            }
+            else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_TOTALS)) {
+                log.debug(" end order form item ind");
+
+                orderFormItemInd = false;
+            }
+            else if (cellValue.equals(ExporterConstants.FACTORY_ORDER_FORM_DELIVERY)) {
                 log.debug(" set order form delivery ind");
                 deliveryInd = true;
                 remarkInd = false;
@@ -188,7 +192,7 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
     }
 
     public void processOrderFormItem(Cell cell) {
-        log.debug("call  processOrderFormItem " + cell.getClass());
+        log.debug("call  processOrderFormItem " + cell.getColumnIndex());
         Object cellValue = DataUtils.getCellValue(cell);
         Double cellValueDouble = null;
         String cellValueStr = null;
@@ -205,14 +209,13 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
 
                 if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_MODEL) && !cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_START)) {
                     log.debug("FACTORY_ORDER_FORM_ITEM_MODEL    " + cellValueStr);
-                    if (factoryPurchaseOrderItemDTO != null) {
 
-                        factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().add(factoryPurchaseOrderItemDTO);
-                        log.debug("getFactoryPurchaseOrderItemDTOList " + factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().toString());
-                    }
                     factoryPurchaseOrderItemDTO = new FactoryPurchaseOrderItemDTO();
                     factoryPurchaseOrderItemDTO.setCreateTime(new Date());
-                    factoryPurchaseOrderItemDTO.setProductModel(cellValueStr);
+                    product = new Product();
+                    product.setImportProductModel(cellValueStr);
+                    factoryPurchaseOrderItemDTO.setProduct(product);
+                    log.debug("factoryPurchaseOrderItemDTO   " + factoryPurchaseOrderItemDTO.toString());
                 }
             } else if (cell.getColumnIndex() == ExporterConstants.FACTORY_ORDER_FORM_ITEM_EXPORTER_REMARK_COLUMN) {
                 if (!cellValueStr.equals(ExporterConstants.FACTORY_ORDER_FORM_ITEM_REMARK)) {
@@ -237,6 +240,9 @@ public class FactoryPurchaseOrderFormProcessor implements DataProcessor {
                 BigDecimal amount = BigDecimal.valueOf(cellValueDouble.doubleValue());
                 log.debug("AMOUNT   " + amount);
                 factoryPurchaseOrderItemDTO.setAmountRMB(amount);
+                factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().add(factoryPurchaseOrderItemDTO);
+                log.debug("getFactoryPurchaseOrderItemDTOList " + factoryPurchaseOrderDTO.getFactoryPurchaseOrderItemDTOList().toString());
+
             }
         }
     }
