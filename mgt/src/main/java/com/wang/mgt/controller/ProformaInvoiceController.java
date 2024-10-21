@@ -1,5 +1,6 @@
 package com.wang.mgt.controller;
 
+import com.wang.dataload.dto.Product;
 import com.wang.dataload.dto.ProformaInvoiceDTO;
 import com.wang.dataload.dto.ProformaInvoiceOrderWithItem;
 import com.wang.mgt.service.MerchantService;
@@ -60,5 +61,10 @@ public class ProformaInvoiceController {
         return proformaInvoiceOrderWithItemList;
     }
 
+    @GetMapping("/findProductModels")
+    public List<String> searchProductModels(){
+        List<String> productModelList = proformaInvoiceService.selectProductModels();
+        return productModelList;
+    }
 
 }

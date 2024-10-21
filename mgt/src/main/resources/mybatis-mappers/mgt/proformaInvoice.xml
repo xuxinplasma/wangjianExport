@@ -120,4 +120,8 @@
         WHERE  pioi.product_model LIKE CONCAT('%', #{productModel}, '%') and fpoi.product_model LIKE CONCAT('%', #{productModel}, '%');
     </select>
 
+    <select id="selectProductModels" resultType="com.wang.dataload.dto.Product">
+        SELECT distinct import_product_model from product;
+    </select>
+
 </mapper>
