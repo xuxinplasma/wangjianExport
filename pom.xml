@@ -11,7 +11,7 @@
     <modules>
         <module>mgt</module>
         <module>dataload</module>
-        <module>dataloadMongo</module>
+
     </modules>
 
     <name>WangExportMerchant</name>
