@@ -61,7 +61,7 @@ public class ProformaInvoiceController {
         return proformaInvoiceOrderWithItemList;
     }
 
-    @GetMapping("/findProductModels")
+        @GetMapping("/findProductModels")
     public List<String> searchProductModels(){
         List<String> productModelList = proformaInvoiceService.selectProductModels();
         return productModelList;
