@@ -30,6 +30,7 @@ public class ProformaInvoiceService {
     public List<String> selectProductModels(){
         List<Product> products = proformaInvoiceDAO.selectProductModels();
         List<String> productModelList = products.stream().map(Product::getImportProductModel ).collect(Collectors.toList());
+        System.out.println("productModelList " + productModelList);
         return productModelList;
     }
 }

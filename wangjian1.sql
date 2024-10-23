@@ -57,7 +57,19 @@ CREATE TABLE `product` (
 	 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+	`id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+	`userName` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'userName',
+	`password` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'password',
+	`create_time` datetime NOT NULL COMMENT '????ʱ?',
+    `last_update_date` datetime DEFAULT NULL COMMENT '????ʱ?',
+	 PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT INTO USER (id, userName, password, create_time, last_update_date) VALUES (1, 'wangjian', '', 
 --
 -- Table structure for table `export_merchant`
 --
