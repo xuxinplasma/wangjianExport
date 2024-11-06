@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import org.apache.commons.io.IOUtils;
 
 import com.wang.dataload.dto.ImportMerchant;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -65,6 +68,35 @@ public class ProformaInvoiceController {
     public List<String> searchProductModels(){
         List<String> productModelList = proformaInvoiceService.selectProductModels();
         return productModelList;
+    }
+
+    @PostMapping("/upload")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+        // 检查文件是否为空
+        if (file.isEmpty()) {
+            return "文件上传失败: 文件为空";
+        }
+
+        // 获取文件名
+        String fileName = file.getOriginalFilename();
+        // 设置上传目录
+        String uploadPath = "C:/uploads/";
+
+        // 检查目录是否存在，不存在则创建
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        try {
+            // 将文件保存到目标路径
+            File dest = new File(uploadPath + fileName);
+            file.transferTo(dest);
+            return "文件上传成功: " + fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "文件上传失败: " + e.getMessage();
+        }
     }
 
 }
